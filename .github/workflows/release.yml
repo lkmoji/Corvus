@@ -14,15 +14,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Zip extension
+      - name: Find and Zip extension
         run: |
-          cd extension
-          zip -r ../extension.zip .
+          # Ищем папку extension где угодно внутри репозитория
+          EXT_DIR=$(find . -type d -name "extension" -not -path "*/\.*" | head -n 1)
+          if [ -z "$EXT_DIR" ]; then
+            echo "ОШИБКА: Папка extension не найдена!"
+            exit 1
+          fi
+          echo "Найдена папка: $EXT_DIR"
+          cd "$EXT_DIR"
+          zip -r ../../extension.zip . -x '*.git*'
 
-      - name: Zip bridge
+      - name: Find and Zip bridge
         run: |
-          cd bridge
-          zip -r ../bridge.zip .
+          # Ищем папку bridge где угодно внутри репозитория
+          BRG_DIR=$(find . -type d -name "bridge" -not -path "*/\.*" | head -n 1)
+          if [ -z "$BRG_DIR" ]; then
+            echo "ОШИБКА: Папка bridge не найдена!"
+            exit 1
+          fi
+          echo "Найдена папка: $BRG_DIR"
+          cd "$BRG_DIR"
+          zip -r ../../bridge.zip . -x '*.git*'
 
       - name: Release
         uses: softprops/action-gh-release@v2
