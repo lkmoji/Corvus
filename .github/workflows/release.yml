@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Zip extension
+        run: |
+          cd extension
+          zip -r ../extension.zip .
+
+      - name: Zip bridge
+        run: |
+          cd bridge
+          zip -r ../bridge.zip .
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            extension.zip
+            bridge.zip
