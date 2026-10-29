@@ -12,17 +12,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Zip extension
         run: |
           cd AIBridge/extension
           zip -r ../../extension.zip .
+          ls -la ../../extension.zip
 
       - name: Zip bridge
         run: |
           cd AIBridge/bridge
           zip -r ../../bridge.zip .
+          ls -la ../../bridge.zip
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -30,3 +33,5 @@ jobs:
           files: |
             extension.zip
             bridge.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
