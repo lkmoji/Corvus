@@ -9,6 +9,8 @@ const HTTP_PORT = 9225;
 const JOB_TIMEOUT_MS = 10 * 60 * 1000;
 const PROFILES_FILE = path.join(__dirname, 'profiles.json');
 const FORWARD = new Set(['ask', 'new_chat', 'close', 'sessions']); // команды, которые выполняет расширение
+const DOCS_DIR = path.join(__dirname, 'docs');                     // разобранные законы с форума: uk.json / ak.json / pdd.json + index.json
+const DOC_KINDS = new Set(['uk', 'ak', 'pdd']);
 
 let nextId = 1;
 const queue = [];          // команды, ждущие расширение
@@ -44,6 +46,27 @@ function resolveJob(msg) {
   return job;
 }
 
+// ---------- документы (УК / АК / ПДД), которые расширение распарсило с форума ----------
+function docsIndex() {
+  try { return JSON.parse(fs.readFileSync(path.join(DOCS_DIR, 'index.json'), 'utf8').replace(/^\uFEFF/, '')); } catch (e) { return {}; }
+}
+function countDoc(data) {
+  let items = 0;
+  for (const ch of data) items += ch.item.length;
+  return { chapters: data.length, items };
+}
+function saveDoc(kind, meta, data) {
+  if (!DOC_KINDS.has(kind)) throw new Error('unknown doc kind: ' + kind);
+  if (!Array.isArray(data) || !data.length || !data.every((c) => c && Array.isArray(c.item))) throw new Error('bad doc: expected non-empty array of {name, item[]}');
+  fs.mkdirSync(DOCS_DIR, { recursive: true });
+  fs.writeFileSync(path.join(DOCS_DIR, kind + '.json'), JSON.stringify(data), 'utf8');
+  const idx = docsIndex();
+  idx[kind] = { title: String((meta && meta.title) || ''), url: String((meta && meta.url) || ''), ...countDoc(data), savedAt: Date.now() };
+  fs.writeFileSync(path.join(DOCS_DIR, 'index.json'), JSON.stringify(idx, null, 2), 'utf8');
+  console.log(`[doc] ${kind}: ${idx[kind].chapters} глав, ${idx[kind].items} статей (${idx[kind].title || 'без названия'})`);
+  return idx[kind];
+}
+
 // ---------- ответы ----------
 function reply(sock, obj, raw) {
   try {
@@ -74,6 +97,17 @@ function handleLine(sock, line) {
       return reply(sock, { ok: true, pong: true, extension: Date.now() - lastPoll < 30000, inflight: pending.size });
     }
     if (cmd === 'profiles') return reply(sock, { ok: true, profiles: loadProfiles() });
+    if (cmd === 'doc_list') {                                  // что уже распарсено: { uk: {title, chapters, items, savedAt}, ... }
+      const idx = docsIndex();
+      return reply(sock, { ok: true, text: JSON.stringify(idx), docs: idx }, !!msg.raw);
+    }
+    if (cmd === 'doc_get') {                                   // содержимое документа (JSON-массив глав) для скрипта
+      const kind = String(msg.kind || msg.text || '').toLowerCase();
+      if (!DOC_KINDS.has(kind)) throw new Error('unknown doc kind: ' + kind);
+      const f = path.join(DOCS_DIR, kind + '.json');
+      if (!fs.existsSync(f)) throw new Error('no doc yet: ' + kind);
+      return reply(sock, { ok: true, text: fs.readFileSync(f, 'utf8').replace(/^\uFEFF/, '') }, !!msg.raw);
+    }
     if (cmd === 'set_profile') {
       if (!msg.name || typeof msg.profile !== 'object') throw new Error('need name and profile{}');
       const P = loadProfiles(); P[msg.name] = msg.profile; saveProfiles(P);
@@ -123,6 +157,26 @@ http.createServer((req, res) => {
     waiter = { res, timer: setTimeout(() => { waiter = null; res.end('null'); }, 20000) };
     req.on('close', () => { if (waiter && waiter.res === res) { clearTimeout(waiter.timer); waiter = null; } });
     return deliver();
+  }
+  if (req.method === 'GET' && req.url === '/docs') {            // расширение проверяет, что мост жив, и видит список
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify(docsIndex()));
+  }
+  if (req.method === 'POST' && req.url === '/doc') {           // расширение присылает готовый документ
+    let body = '';
+    req.on('data', (c) => (body += c));
+    req.on('end', () => {
+      res.setHeader('Content-Type', 'application/json');
+      try {
+        const r = JSON.parse(body);
+        const info = saveDoc(String(r.kind || '').toLowerCase(), r.meta, r.data);
+        res.end(JSON.stringify({ ok: true, ...info }));
+      } catch (e) {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ ok: false, error: e.message }));
+      }
+    });
+    return;
   }
   if (req.method === 'POST' && req.url === '/result') {
     let body = '';
