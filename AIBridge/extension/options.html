@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI Bridge</title>
+<body style="font-family:sans-serif;padding:20px">
+  <h3>AI Bridge — настройки</h3>
+  <label>Нейросеть по умолчанию:
+    <select id="site">
+      <option value="deepseek">DeepSeek</option>
+      <option value="chatgpt">ChatGPT</option>
+    </select>
+  </label>
+  <span id="st" style="margin-left:10px;color:green"></span>
+  <p style="color:#666">Можно переопределить в команде: {"cmd":"ask","text":"...","site":"chatgpt"}</p>
+  <script src="options.js"></script>
+</body>
