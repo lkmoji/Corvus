@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI Bridge</title>
+<body style="font-family:sans-serif;padding:20px">
+  <h3>AI Bridge — настройки</h3>
+  <label>Нейросеть по умолчанию:
+    <select id="site">
+      <option value="deepseek">DeepSeek</option>
+      <option value="chatgpt">ChatGPT</option>
+    </select>
+  </label>
+  <span id="st" style="margin-left:10px;color:green"></span>
+  <br><br>
+  <label>Как отправлять закон в DeepSeek:
+    <select id="mode"><option value="file">Файлом целиком (по умолчанию, при сбое — частями)</option><option value="chunks">Только частями</option></select>
+  </label>
+  <br><br>
+  <label>Параллельных окон DeepSeek при парсинге форума:
+    <select id="workers"><option value="1">1 (надёжно, по умолчанию)</option><option value="2">2</option><option value="3">3</option></select>
+  </label>
+  <p style="color:#666">При значении больше 1 каждое окно открывается отдельно и не должно быть свёрнуто или закрыто другими окнами — иначе страница DeepSeek в фоне может не отдавать ответ.</p>
+  <p style="color:#666">Можно переопределить в команде: {"cmd":"ask","text":"...","site":"chatgpt"}</p>
+  <script src="options.js"></script>
+</body>
