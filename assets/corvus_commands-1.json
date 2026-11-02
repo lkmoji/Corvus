@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "_comment": "id - обработчик в скрипте (не менять); name - команда в чате; aliases - доп. имена; enabled=false отключает команду.",
+  "commands": [
+    {
+      "id": "menu",
+      "name": "crow",
+      "aliases": [],
+      "desc": "Открыть или закрыть меню Corvus",
+      "enabled": true
+    },
+    {
+      "id": "dbg",
+      "name": "crowdbg",
+      "aliases": [],
+      "desc": "Диагностика ввода под меню (отладка)",
+      "enabled": true
+    },
+    {
+      "id": "org",
+      "name": "corg",
+      "aliases": [],
+      "desc": "Загрузить состав организации (/members + /lmenu)",
+      "enabled": true
+    },
+    {
+      "id": "lc",
+      "name": "lc",
+      "aliases": [],
+      "desc": "Автовыдача лицензий (ЦЛ): включить или выключить",
+      "enabled": true
+    },
+    {
+      "id": "doc",
+      "name": "cdoc",
+      "aliases": [],
+      "desc": "Забрать УК, АК и ПДД с форума у моста",
+      "enabled": true
+    },
+    {
+      "id": "lcdbg",
+      "name": "lcdbg",
+      "aliases": [],
+      "desc": "Отладка автовыдачи лицензий",
+      "enabled": true
+    },
+    {
+      "id": "eye",
+      "name": "eye",
+      "aliases": [],
+      "desc": "Проверка «Глаза бога»: /eye [текст]",
+      "enabled": true
+    },
+    {
+      "id": "dem",
+      "name": "cdem",
+      "aliases": [],
+      "desc": "Увольнение госслужащего: /cdem [id] [причина]",
+      "enabled": true
+    },
+    {
+      "id": "sum",
+      "name": "sum",
+      "aliases": [],
+      "desc": "Умный розыск: /sum [ID игрока]",
+      "enabled": true
+    },
+    {
+      "id": "ver",
+      "name": "cver",
+      "aliases": [],
+      "desc": "Показать версию сборки",
+      "enabled": true
+    },
+    {
+      "id": "l2d",
+      "name": "l2dupdate",
+      "aliases": [],
+      "desc": "Перекачать файлы Live2D с GitHub",
+      "enabled": true
+    },
+    {
+      "id": "tsm",
+      "name": "tsm",
+      "aliases": [],
+      "desc": "Умный ПДД: /tsm [ID]",
+      "enabled": true
+    },
+    {
+      "id": "veh",
+      "name": "cveh",
+      "aliases": [],
+      "desc": "Обновить названия транспорта",
+      "enabled": true
+    },
+    {
+      "id": "hm",
+      "name": "hm",
+      "aliases": [],
+      "desc": "FastMenu (hm): /hm [ID]",
+      "enabled": true
+    },
+    {
+      "id": "lm",
+      "name": "lm",
+      "aliases": [],
+      "desc": "FastMenu (lm): /lm [ID]",
+      "enabled": true
+    },
+    {
+      "id": "piecl",
+      "name": "piecl",
+      "aliases": [],
+      "desc": "Аварийно закрыть Pie Menu",
+      "enabled": true
+    },
+    {
+      "id": "eyestop",
+      "name": "eyestop",
+      "aliases": [],
+      "desc": "Скрыть «Глаз бога»",
+      "enabled": true
+    },
+    {
+      "id": "rpgo",
+      "name": "rpgo",
+      "aliases": [],
+      "desc": "Продолжить отыгровку после {pause}",
+      "enabled": true
+    },
+    {
+      "id": "rpstop",
+      "name": "rpstop",
+      "aliases": [],
+      "desc": "Прервать отыгровку",
+      "enabled": true
+    },
+    {
+      "id": "cmds",
+      "name": "ccmd",
+      "aliases": [],
+      "desc": "Обновить список команд с GitHub",
+      "enabled": true
+    }
+  ]
+}
